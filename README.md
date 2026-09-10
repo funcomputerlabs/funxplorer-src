@@ -1,48 +1,34 @@
 # Funxplorer
 
-Product sources for Funxplorer. This is **not** a Firefox mirror and **not** a GitHub fork of `mozilla-firefox/firefox`.
+Navegador Funxplorer. Este repo es **solo la capa de producto**: branding, Funsearch, cuentas, FUNSHIELD, VPN/Tor y Fun Smart. No es el código completo de Firefox ni un fork de `mozilla-firefox/firefox`.
 
-Firefox itself stays upstream: https://github.com/mozilla-firefox/firefox
+Sitio de búsqueda: [funsearchapp.netlify.app](https://funsearchapp.netlify.app/)
 
-Built on mozilla-central around `98f1235b79c1`. Overlay commit in the local Gecko tree: `fa9bb544cfce`.
+## Qué incluye
 
-## Layout
+- **Funsearch** — búsqueda por defecto (no trata la query como URL)
+- **FunComputer** — cuentas opcionales (`about:funcomputer`)
+- **FUNSHIELD** — bloqueo de anuncios y rastreo (basado en uBlock Origin)
+- **FUNVPN / FUNTOR** — VPN y Tor, uno u otro
+- **Fun Smart** — ventana inteligente (Classic Window al arrancar)
+- **Classic Window** — ventana normal por defecto
 
-- `browser/branding/funxplorer/` — branding
-- `browser/extensions/funshield/` — FUNSHIELD (uBlock Origin 1.74.0, GPLv3)
-- `funsearch-web/` — Funsearch site (Netlify)
-- other `browser/`, `toolkit/`, `services/` files — Gecko patches
-- `funxplorer-on-firefox.patch` — same changes as a patch
+## Contenido del repo
 
-## Apply onto Firefox
+| Ruta | Qué es |
+| --- | --- |
+| `browser/branding/funxplorer/` | Marca e iconos |
+| `browser/extensions/funshield/` | FUNSHIELD |
+| `funsearch-web/` | Web de Funsearch (Netlify) |
+| `browser/`, `toolkit/`, `services/` | Parches sobre Gecko |
+| `funxplorer-on-firefox.patch` | Los mismos cambios en un patch |
+| `mozconfig` | Branding Funxplorer |
+
+## Compilar
+
+Hace falta un clone de Firefox y copiar esto encima:
 
 ```text
 git clone https://github.com/mozilla-firefox/firefox.git
 cd firefox
 git checkout 98f1235b79c1
-```
-
-Copy this repo over that tree (keep Firefox `.gitignore`), or:
-
-```text
-git apply --check path/to/funxplorer-on-firefox.patch
-git apply path/to/funxplorer-on-firefox.patch
-```
-
-mozconfig:
-
-```text
-ac_add_options --with-branding=browser/branding/funxplorer
-```
-
-Do not push Funxplorer changes to `mozilla-firefox/firefox`.
-
-## Site
-
-Funsearch: https://funsearchapp.netlify.app/
-
-## License
-
-Gecko-derived files: MPL 2.0 (Mozilla).
-FUNSHIELD: GPLv3 (Raymond Hill / uBlock Origin).
-Keep those notices when you redistribute.
