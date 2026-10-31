@@ -17,6 +17,20 @@ var gFunxplorerVpn = {
     MozXULElement.insertFTLIfNeeded("browser/appmenu.ftl");
     Services.obs.addObserver(this, FunxplorerVpn.TOPIC);
     window.addEventListener("unload", () => this.uninit(), { once: true });
+    try {
+      let { CustomizableUI } = ChromeUtils.importESModule(
+        "moz-src:///browser/components/customizableui/CustomizableUI.sys.mjs"
+      );
+      if (!CustomizableUI.getPlacementOfWidget("funvpn-button")) {
+        CustomizableUI.addWidgetToArea(
+          "funvpn-button",
+          CustomizableUI.AREA_NAVBAR
+        );
+      }
+      if (!CustomizableUI.getPlacementOfWidget("tor-button")) {
+        CustomizableUI.addWidgetToArea("tor-button", CustomizableUI.AREA_NAVBAR);
+      }
+    } catch {}
     this.updateUI();
   },
 
@@ -46,7 +60,12 @@ var gFunxplorerVpn = {
   },
 
   async toggle() {
-    let result = await FunxplorerVpn.toggle();
+    let result;
+    try {
+      result = await FunxplorerVpn.toggle();
+    } catch (e) {
+      result = { ok: false, error: String(e) };
+    }
     this.updateUI();
     if (window.gFunxplorerTor) {
       window.gFunxplorerTor.updateUI();
@@ -55,7 +74,7 @@ var gFunxplorerVpn = {
       Services.prompt.alert(
         window,
         "FUNVPN",
-        result.error || "Could not connect to FUNVPN."
+        result.error || "No se pudo conectar a FUNVPN."
       );
     }
   },

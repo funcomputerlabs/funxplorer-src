@@ -1,0 +1,73 @@
+:root {
+  color-scheme: dark;
+  --bg: #09090b;
+  --card: #141418;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: #27272a;
+  --accent: #f4f4f5;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.45 system-ui, sans-serif;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 650;
+  margin: 0 0 8px;
+}
+.lead,
+.hint {
+  color: var(--muted);
+  margin: 0 0 28px;
+}
+section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px 8px;
+  margin-bottom: 16px;
+}
+h2 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+label.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+input,
+select {
+  background: #09090b;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+#status {
+  color: #86efac;
+}

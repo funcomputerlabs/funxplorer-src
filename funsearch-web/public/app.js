@@ -1,84 +1,55 @@
 const PAGE_SIZE = 10;
-const SESSION_KEY = "funcomputer-session";
+const LANG_KEY = "funsearch-lang";
 
 function pageParams() {
   return new URLSearchParams(window.location.search);
 }
 
-function session() {
-  try {
-    return JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
-  } catch {
-    return null;
-  }
-}
-
-function showAuthStatus(message, isError) {
-  const el = document.getElementById("auth-status");
-  el.classList.toggle("hidden", !message);
-  el.classList.toggle("error", !!isError);
-  el.textContent = message || "";
-}
-
-function setMenuOpen(open) {
-  const menu = document.getElementById("account-menu");
-  menu.hidden = !open;
-  menu.classList.toggle("hidden", !open);
-  document.getElementById("sign-in-button").setAttribute("aria-expanded", String(open));
-  document.getElementById("avatar-button").setAttribute("aria-expanded", String(open));
-}
-
-function renderAccount() {
-  const current = session();
-  const signed = !!(current && current.email);
-  document.getElementById("signed-in").classList.toggle("hidden", !signed);
-  document.getElementById("auth-form").classList.toggle("hidden", signed);
-  document.getElementById("sign-in-button").classList.toggle("hidden", signed);
-  document.getElementById("avatar-button").classList.toggle("hidden", !signed);
-  if (signed) {
-    const email = current.email;
-    document.getElementById("signed-in-email").textContent = email;
-    document.getElementById("avatar-button").textContent = email
-      .trim()
-      .charAt(0)
-      .toUpperCase();
-    document.getElementById("avatar-button").title = email;
-  }
-}
-
-async function authRequest(path, body, token) {
-  const response = await fetch(`/api/auth/${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(
-      data.error?.message || data.error || data.msg || "Request failed"
-    );
-  }
-  return data;
-}
-
-function saveFromPayload(data) {
-  const access = data.access_token || data.session?.access_token;
-  const email = data.user?.email || data.session?.user?.email || data.email;
-  if (!access || !email) {
-    return false;
-  }
-  localStorage.setItem(
-    SESSION_KEY,
-    JSON.stringify({
-      access_token: access,
-      refresh_token: data.refresh_token || data.session?.refresh_token || "",
-      email,
-    })
+function currentLang() {
+  const params = pageParams();
+  return resolveFunsearchLang(
+    params.get("hl") || localStorage.getItem(LANG_KEY) || "es"
   );
-  return true;
+}
+
+function ui() {
+  return funsearchUi(currentLang().id);
+}
+
+function searchUrl(query, page) {
+  const params = new URLSearchParams();
+  if (query) {
+    params.set("q", query);
+  }
+  if (page > 1) {
+    params.set("page", String(page));
+  }
+  params.set("hl", currentLang().id);
+  return "/?" + params.toString();
+}
+
+function applyChrome() {
+  const lang = currentLang();
+  const text = ui();
+  document.documentElement.lang = lang.id;
+  document.documentElement.dir = lang.dir || "ltr";
+  const select = document.getElementById("lang-select");
+  if (!select.childElementCount) {
+    for (const item of FUNSEARCH_LANGS) {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      select.appendChild(option);
+    }
+  }
+  select.value = lang.id;
+  select.setAttribute("aria-label", text.language);
+  document.getElementById("q").placeholder = text.placeholder;
+  document.getElementById("q-header").placeholder = text.placeholder;
+  for (const button of document.querySelectorAll("[data-i18n='search']")) {
+    button.textContent = text.search;
+  }
+  document.querySelector("footer").textContent = text.footer;
 }
 
 function bindSearchForm(form) {
@@ -86,7 +57,7 @@ function bindSearchForm(form) {
     event.preventDefault();
     const query = form.querySelector('input[type="search"]').value.trim();
     if (query) {
-      window.location.href = "/?q=" + encodeURIComponent(query);
+      window.location.href = searchUrl(query, 1);
     }
   });
 }
@@ -105,30 +76,86 @@ function renderStatus(text) {
   status.textContent = text;
 }
 
+function renderOverview(overview) {
+  const box = document.getElementById("overview");
+  box.replaceChildren();
+  if (!overview?.text) {
+    box.hidden = true;
+    box.classList.add("hidden");
+    return;
+  }
+  const title = document.createElement("h2");
+  title.textContent = ui().overview;
+  const body = document.createElement("div");
+  body.className = "overview-text";
+  for (const block of overview.text.split(/\n+/)) {
+    const line = block.trim();
+    if (!line) {
+      continue;
+    }
+    if (line.startsWith("- ") || line.startsWith("* ")) {
+      let list = body.lastElementChild;
+      if (!list || list.tagName !== "UL") {
+        list = document.createElement("ul");
+        body.appendChild(list);
+      }
+      const item = document.createElement("li");
+      item.textContent = line.replace(/^[-*]\s+/, "");
+      list.appendChild(item);
+      continue;
+    }
+    const p = document.createElement("p");
+    p.textContent = line;
+    body.appendChild(p);
+  }
+  box.append(title, body);
+  if (overview.sources?.length) {
+    const sources = document.createElement("ol");
+    sources.className = "overview-sources";
+    for (const source of overview.sources) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = source.url;
+      link.textContent = source.title;
+      item.appendChild(link);
+      sources.appendChild(item);
+    }
+    box.appendChild(sources);
+  }
+  box.hidden = false;
+  box.classList.remove("hidden");
+}
+
 async function renderResults(query, page) {
+  const text = ui();
   document.body.classList.remove("home-mode");
   document.getElementById("header-search").classList.remove("hidden");
   document.getElementById("q-header").value = query;
   const resultsEl = document.getElementById("results");
   const pager = document.getElementById("pager");
-  renderStatus("Searching…");
+  renderStatus(text.searching);
   resultsEl.replaceChildren();
   pager.replaceChildren();
+  renderOverview(null);
 
   try {
     const response = await fetch(
-      `/api/search?q=${encodeURIComponent(query)}&page=${page}`
+      `/api/search?q=${encodeURIComponent(query)}&page=${page}&lang=${encodeURIComponent(currentLang().id)}`
     );
     if (!response.ok) {
       throw new Error("search-failed");
     }
     const data = await response.json();
     const results = data.results || [];
+    renderOverview(data.overview);
     if (!results.length) {
-      renderStatus(`No results found for “${query}”.`);
+      renderStatus(text.none(query));
       return;
     }
-    renderStatus(`${results.length} results`);
+    const indexes = (data.indexes || []).join(", ");
+    renderStatus(
+      indexes ? `${text.results(results.length)} · ${indexes}` : text.results(results.length)
+    );
     for (const result of results) {
       const article = document.createElement("article");
       article.className = "result";
@@ -152,96 +179,40 @@ async function renderResults(query, page) {
     resultsEl.classList.remove("hidden");
     if (page > 1) {
       const prev = document.createElement("a");
-      prev.href = `/?q=${encodeURIComponent(query)}&page=${page - 1}`;
-      prev.textContent = "Previous";
+      prev.href = searchUrl(query, page - 1);
+      prev.textContent = text.prev;
       pager.appendChild(prev);
     }
     if (results.length >= PAGE_SIZE) {
       const next = document.createElement("a");
-      next.href = `/?q=${encodeURIComponent(query)}&page=${page + 1}`;
-      next.textContent = "Next";
+      next.href = searchUrl(query, page + 1);
+      next.textContent = text.next;
       pager.appendChild(next);
     }
     pager.classList.toggle("hidden", !pager.childElementCount);
   } catch {
-    renderStatus("Funsearch could not load results. Check your connection and try again.");
+    renderStatus(text.error);
   }
 }
+
+document.getElementById("lang-select").addEventListener("change", event => {
+  const lang = resolveFunsearchLang(event.target.value);
+  localStorage.setItem(LANG_KEY, lang.id);
+  const query = (pageParams().get("q") || "").trim();
+  const page = Math.max(parseInt(pageParams().get("page") || "1", 10) || 1, 1);
+  window.location.href = searchUrl(query, query ? page : 1);
+});
 
 bindSearchForm(document.getElementById("home-search"));
 bindSearchForm(document.getElementById("header-search"));
 
-document.getElementById("sign-in-button").addEventListener("click", event => {
-  event.stopPropagation();
-  const menu = document.getElementById("account-menu");
-  setMenuOpen(menu.hidden);
-});
-
-document.getElementById("avatar-button").addEventListener("click", event => {
-  event.stopPropagation();
-  const menu = document.getElementById("account-menu");
-  setMenuOpen(menu.hidden);
-});
-
-document.addEventListener("click", event => {
-  const slot = document.querySelector(".account-slot");
-  if (!slot.contains(event.target)) {
-    setMenuOpen(false);
-  }
-});
-
-document.getElementById("auth-form").addEventListener("submit", async event => {
-  event.preventDefault();
-  showAuthStatus("");
-  try {
-    const data = await authRequest("login", {
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value,
-    });
-    if (!saveFromPayload(data)) {
-      throw new Error("Could not sign in.");
-    }
-    renderAccount();
-    setMenuOpen(false);
-  } catch (ex) {
-    showAuthStatus(ex.message, true);
-  }
-});
-
-document.getElementById("signup").addEventListener("click", async () => {
-  showAuthStatus("");
-  try {
-    const data = await authRequest("signup", {
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value,
-    });
-    if (saveFromPayload(data)) {
-      renderAccount();
-      setMenuOpen(false);
-      return;
-    }
-    showAuthStatus("Account created. Confirm your email, then sign in.");
-  } catch (ex) {
-    showAuthStatus(ex.message, true);
-  }
-});
-
-document.getElementById("header-logout").addEventListener("click", async () => {
-  const current = session();
-  try {
-    if (current?.access_token) {
-      await authRequest("logout", {}, current.access_token);
-    }
-  } catch {}
-  localStorage.removeItem(SESSION_KEY);
-  renderAccount();
-  setMenuOpen(false);
-});
-
 const params = pageParams();
 const query = (params.get("q") || "").trim();
+if (params.get("hl")) {
+  localStorage.setItem(LANG_KEY, currentLang().id);
+}
+applyChrome();
 document.getElementById("q").value = query;
-renderAccount();
 if (query) {
   document.title = `${query} · Funsearch`;
   const page = Math.max(parseInt(params.get("page") || "1", 10) || 1, 1);

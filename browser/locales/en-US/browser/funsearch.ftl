@@ -16,3 +16,4 @@ funsearch-error = Funsearch could not load results. Check your connection and tr
 funsearch-next-page = Next
 funsearch-previous-page = Previous
 funsearch-footer = Funsearch · Funxplorer
+funsearch-language-label = Language

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Personalizar Funxplorer</title>
+    <link rel="stylesheet" href="chrome://browser/content/funxplorer-customize.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Personalizar Funxplorer</h1>
+      <p class="lead">
+        Estos ajustes se guardan en tu perfil. No hace falta cuenta.
+      </p>
+
+      <section>
+        <h2>Apariencia</h2>
+        <label>Tema del contenido
+          <select data-pref="layout.css.prefers-color-scheme.content-override" data-type="int">
+            <option value="2">Automático</option>
+            <option value="0">Oscuro</option>
+            <option value="1">Claro</option>
+          </select>
+        </label>
+        <label>Densidad de la interfaz
+          <select data-pref="browser.uidensity" data-type="int">
+            <option value="0">Normal</option>
+            <option value="1">Compacta</option>
+            <option value="2">Táctil</option>
+          </select>
+        </label>
+        <label>Visibilidad de marcadores
+          <select data-pref="browser.toolbars.bookmarks.visibility" data-type="string">
+            <option value="always">Siempre</option>
+            <option value="newtab">Solo en pestaña nueva</option>
+            <option value="never">Nunca</option>
+          </select>
+        </label>
+        <label>Tamaño de fuente
+          <input data-pref="font.size.variable.x-western" data-type="int" type="number" min="9" max="72" />
+        </label>
+        <label>Zoom predeterminado (%)
+          <input data-pref="toolkit.zoomManager.zoomValues" data-skip="1" type="hidden" />
+          <input id="default-zoom" type="number" min="50" max="300" step="10" />
+        </label>
+        <label class="check"><input data-pref="browser.tabs.inTitlebar" data-type="int" data-bool-int="1" type="checkbox" /> Pestañas en la barra de título</label>
+        <label class="check"><input data-pref="browser.tabs.tabmanager.enabled" data-type="bool" type="checkbox" /> Lista de pestañas</label>
+        <label class="check"><input data-pref="sidebar.revamp" data-type="bool" type="checkbox" /> Barra lateral nueva</label>
+        <label class="check"><input data-pref="browser.compactmode.show" data-type="bool" type="checkbox" /> Mostrar modo compacto</label>
+        <label class="check"><input data-pref="toolkit.legacyUserProfileCustomizations.stylesheets" data-type="bool" type="checkbox" /> Permitir userChrome.css</label>
+        <label class="check"><input data-pref="browser.display.use_document_fonts" data-type="int" data-bool-int="1" type="checkbox" /> Usar fuentes de la página</label>
+        <label class="check"><input data-pref="general.smoothScroll" data-type="bool" type="checkbox" /> Desplazamiento suave</label>
+        <label class="check"><input data-pref="layout.spellcheckDefault" data-type="int" data-bool-int="1" type="checkbox" /> Corrector ortográfico</label>
+      </section>
+
+      <section>
+        <h2>Pestañas y ventanas</h2>
+        <label>Al iniciar
+          <select data-pref="browser.startup.page" data-type="int">
+            <option value="0">Página en blanco</option>
+            <option value="1">Página de inicio</option>
+            <option value="3">Ventanas y pestañas anteriores</option>
+          </select>
+        </label>
+        <label>Página de inicio
+          <input data-pref="browser.startup.homepage" data-type="string" type="text" />
+        </label>
+        <label class="check"><input data-pref="browser.newtabpage.enabled" data-type="bool" type="checkbox" /> Página de nueva pestaña</label>
+        <label class="check"><input data-pref="browser.tabs.closeWindowWithLastTab" data-type="bool" type="checkbox" /> Cerrar ventana al cerrar la última pestaña</label>
+        <label class="check"><input data-pref="browser.tabs.insertAfterCurrent" data-type="bool" type="checkbox" /> Abrir pestañas junto a la actual</label>
+        <label class="check"><input data-pref="browser.tabs.warnOnClose" data-type="bool" type="checkbox" /> Avisar al cerrar varias pestañas</label>
+        <label class="check"><input data-pref="browser.ctrlTab.sortByRecentlyUsed" data-type="bool" type="checkbox" /> Ctrl+Tab por uso reciente</label>
+        <label class="check"><input data-pref="browser.search.openintab" data-type="bool" type="checkbox" /> Buscar en una pestaña nueva</label>
+        <label class="check"><input data-pref="browser.tabs.loadBookmarksInTabs" data-type="bool" type="checkbox" /> Abrir marcadores en pestaña nueva</label>
+        <label class="check"><input data-pref="browser.link.open_newwindow" data-type="int" data-map-true="3" data-map-false="1" type="checkbox" /> Enlaces emergentes en pestaña</label>
+        <label class="check"><input data-pref="browser.fullscreen.autohide" data-type="bool" type="checkbox" /> Ocultar barras en pantalla completa</label>
+      </section>
+
+      <section>
+        <h2>Privacidad</h2>
+        <label>Cookies
+          <select data-pref="network.cookie.cookieBehavior" data-type="int">
+            <option value="0">Permitir todas</option>
+            <option value="1">Bloquear de terceros</option>
+            <option value="4">Bloquear de rastreadores</option>
+            <option value="5">Aislar por sitio (recomendado)</option>
+          </select>
+        </label>
+        <label>Reproducción automática
+          <select data-pref="media.autoplay.default" data-type="int">
+            <option value="0">Permitir</option>
+            <option value="1">Bloquear audio</option>
+            <option value="5">Bloquear audio y vídeo</option>
+          </select>
+        </label>
+        <label class="check"><input data-pref="privacy.trackingprotection.enabled" data-type="bool" type="checkbox" /> Protección contra el rastreo</label>
+        <label class="check"><input data-pref="privacy.resistFingerprinting" data-type="bool" type="checkbox" /> Resistir huella digital</label>
+        <label class="check"><input data-pref="privacy.donottrackheader.enabled" data-type="bool" type="checkbox" /> Enviar Do Not Track</label>
+        <label class="check"><input data-pref="privacy.globalprivacycontrol.enabled" data-type="bool" type="checkbox" /> Global Privacy Control</label>
+        <label class="check"><input data-pref="geo.enabled" data-type="bool" type="checkbox" /> Geolocalización</label>
+        <label class="check"><input data-pref="dom.webnotifications.enabled" data-type="bool" type="checkbox" /> Notificaciones web</label>
+        <label class="check"><input data-pref="media.navigator.enabled" data-type="bool" type="checkbox" /> Cámara y micrófono (API)</label>
+        <label class="check"><input data-pref="dom.battery.enabled" data-type="bool" type="checkbox" /> API de batería</label>
+        <label class="check"><input data-pref="webgl.disabled" data-type="bool" type="checkbox" /> Desactivar WebGL</label>
+        <label class="check"><input data-pref="privacy.clearOnShutdown.cookies" data-type="bool" type="checkbox" /> Borrar cookies al salir</label>
+        <label class="check"><input data-pref="privacy.clearOnShutdown.history" data-type="bool" type="checkbox" /> Borrar historial al salir</label>
+        <label class="check"><input data-pref="privacy.clearOnShutdown.cache" data-type="bool" type="checkbox" /> Borrar caché al salir</label>
+        <label class="check"><input data-pref="signon.rememberSignons" data-type="bool" type="checkbox" /> Guardar contraseñas</label>
+        <label class="check"><input data-pref="browser.safebrowsing.malware.enabled" data-type="bool" type="checkbox" /> Bloquear malware (Google/Mozilla)</label>
+        <label class="check"><input data-pref="browser.safebrowsing.phishing.enabled" data-type="bool" type="checkbox" /> Bloquear phishing</label>
+      </section>
+
+      <section>
+        <h2>Red y rendimiento</h2>
+        <label>DNS sobre HTTPS
+          <select data-pref="network.trr.mode" data-type="int">
+            <option value="0">Desactivado</option>
+            <option value="2">DoH con respaldo</option>
+            <option value="3">Solo DoH</option>
+            <option value="5">Desactivado por FUNVPN/FUNTOR</option>
+          </select>
+        </label>
+        <label>Servidor DoH
+          <input data-pref="network.trr.uri" data-type="string" type="text" />
+        </label>
+        <label class="check"><input data-pref="network.http.http3.enabled" data-type="bool" type="checkbox" /> HTTP/3</label>
+        <label class="check"><input data-pref="network.prefetch-next" data-type="bool" type="checkbox" /> Precarga de enlaces</label>
+        <label class="check"><input data-pref="network.dns.disablePrefetch" data-type="bool" type="checkbox" /> Desactivar precarga DNS</label>
+        <label class="check"><input data-pref="browser.cache.disk.enable" data-type="bool" type="checkbox" /> Caché en disco</label>
+        <label class="check"><input data-pref="browser.cache.memory.enable" data-type="bool" type="checkbox" /> Caché en memoria</label>
+        <label class="check"><input data-pref="layers.acceleration.disabled" data-type="bool" type="checkbox" /> Desactivar aceleración por hardware</label>
+        <label class="check"><input data-pref="media.hardware-video-decoding.enabled" data-type="bool" type="checkbox" /> Decodificación de vídeo por hardware</label>
+        <label class="check"><input data-pref="javascript.options.wasm" data-type="bool" type="checkbox" /> WebAssembly</label>
+      </section>
+
+      <section>
+        <h2>Funxplorer</h2>
+        <label>Servidor FUNVPN
+          <select data-pref="funxplorer.vpn.location" data-type="string">
+            <option value="ams">Ámsterdam</option>
+            <option value="sgp">Singapur</option>
+            <option value="lax">Los Ángeles</option>
+          </select>
+        </label>
+        <label class="check"><input data-pref="browser.smartwindow.enabled" data-type="bool" type="checkbox" /> Fun Smart</label>
+        <label class="check"><input data-pref="browser.smartwindow.agent.enabled" data-type="bool" type="checkbox" /> Agente de Fun Smart</label>
+        <label class="check"><input data-pref="xpinstall.signatures.required" data-type="bool" type="checkbox" /> Exigir firma de extensiones</label>
+        <p class="hint">
+          Idioma, FUNVPN, FUNTOR y FUNSHIELD también están en el menú de la
+          aplicación.
+        </p>
+      </section>
+
+      <p id="status" hidden>Guardado.</p>
+    </main>
+    <script src="chrome://browser/content/funxplorer-customize.js"></script>
+  </body>
+</html>

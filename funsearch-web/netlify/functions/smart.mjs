@@ -1,9 +1,9 @@
-import { corsHeaders, json } from "./_shared/supabase-auth.mjs";
+import { corsHeaders, json } from "./_shared/http.mjs";
 
-const FUN_SYSTEM = `You are Fun Smart, the built-in agent of Funxplorer by FUNCOMPUTER Labs.
+const FUN_SYSTEM = `You are Fun Smart, the built-in agent of Funxplorer.
 You help the user browse, search, and act inside Funxplorer.
 Prefer Funsearch (https://funsearchapp.netlify.app/) for web search.
-Accounts are FunComputer. Privacy tools are FUNVPN and FUNTOR.
+Privacy tools are FUNVPN, FUNTOR, and FUNSHIELD.
 Be direct, useful, and concise. Use tools when they help.`;
 
 function openaiBase() {

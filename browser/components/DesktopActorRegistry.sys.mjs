@@ -96,26 +96,6 @@ let JSWINDOWACTORS = {
     remoteTypes: ["parent"],
   },
 
-  AboutFuncomputer: {
-    parent: {
-      esModuleURI: "resource:///actors/AboutFuncomputerParent.sys.mjs",
-    },
-    child: {
-      esModuleURI: "resource:///actors/AboutFuncomputerChild.sys.mjs",
-      events: {
-        DOMDocElementInserted: { capture: true },
-      },
-    },
-    matches: [
-      "about:funcomputer",
-      "about:funcomputer?*",
-      "chrome://browser/content/funcomputer-accounts.html",
-      "chrome://browser/content/funcomputer-accounts.html?*",
-    ],
-    includeChrome: true,
-    remoteTypes: ["privilegedabout", "parent", "web"],
-  },
-
   AboutFunsearch: {
     parent: {
       esModuleURI: "resource:///actors/AboutFunsearchParent.sys.mjs",

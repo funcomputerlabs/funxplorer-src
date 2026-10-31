@@ -46,7 +46,19 @@ var gFunxplorerTor = {
   },
 
   async toggle() {
-    let result = await FunxplorerTor.toggle();
+    if (!FunxplorerTor.enabled && !FunxplorerTor.hasBinary()) {
+      Services.prompt.alert(
+        window,
+        "FUNTOR",
+        "Funxplorer descargará Tor (~23 MB). Deja el navegador abierto."
+      );
+    }
+    let result;
+    try {
+      result = await FunxplorerTor.toggle();
+    } catch (e) {
+      result = { ok: false, error: String(e) };
+    }
     this.updateUI();
     if (window.gFunxplorerVpn) {
       window.gFunxplorerVpn.updateUI();
@@ -55,7 +67,7 @@ var gFunxplorerTor = {
       Services.prompt.alert(
         window,
         "FUNTOR",
-        result.error || "Could not connect to FUNTOR."
+        result.error || "No se pudo conectar a FUNTOR."
       );
     }
   },

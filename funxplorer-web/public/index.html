@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Funxplorer — el navegador</title>
+    <meta
+      name="description"
+      content="Funxplorer: Funsearch, FUNSHIELD, FUNVPN, FUNTOR y Fun Smart. Descarga el instalador para Windows."
+    />
+    <link rel="canonical" href="https://funxplorer.netlify.app/" />
+    <meta property="og:title" content="Funxplorer" />
+    <meta
+      property="og:description"
+      content="El navegador Funxplorer. Descarga para Windows."
+    />
+    <meta property="og:image" content="https://funxplorer.netlify.app/logo.png" />
+    <meta property="og:url" content="https://funxplorer.netlify.app/" />
+    <link rel="icon" href="/logo.png" type="image/png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#contenido" data-i18n="skip">Saltar al contenido</a>
+    <header class="top">
+      <a class="brand" href="/">
+        <img src="/logo.png" width="40" height="40" alt="" />
+        Funxplorer
+      </a>
+      <nav aria-label="Principal">
+        <a href="#funciones" data-i18n="navFeatures">Funciones</a>
+        <a href="https://funsearchapp.netlify.app/">Funsearch</a>
+        <a href="https://github.com/ssw-813/funxplorer-src" data-i18n="navCode">Código</a>
+        <label class="visually-hidden" for="lang-select" data-i18n="language">Idioma</label>
+        <select id="lang-select" class="lang-select"></select>
+        <a
+          class="download"
+          data-i18n="download"
+          href="https://github.com/ssw-813/funxplorer-src/releases/download/v156.0a1/Funxplorer-156.0a1.win64.installer.exe"
+        >
+          Descargar
+        </a>
+      </nav>
+    </header>
+    <main id="contenido">
+      <section class="hero">
+        <img class="hero-logo" src="/logo.png" width="160" height="160" alt="Funxplorer" />
+        <h1>Funxplorer</h1>
+        <p class="lead" data-i18n="lead">
+          Navegador con Funsearch de verdad, FUNSHIELD, FUNVPN, FUNTOR y Fun
+          Smart. Ventana clásica al arrancar. Sin cuentas.
+        </p>
+        <p class="actions">
+          <a
+            class="download download-lg"
+            data-i18n="downloadWin"
+            href="https://github.com/ssw-813/funxplorer-src/releases/download/v156.0a1/Funxplorer-156.0a1.win64.installer.exe"
+          >
+            Descargar para Windows
+          </a>
+        </p>
+        <p class="meta" data-i18n="meta">Instalador 64 bits · v156.0a1 · Windows</p>
+      </section>
+      <section id="funciones" class="features" aria-labelledby="funciones-title">
+        <h2 id="funciones-title" data-i18n="features">Qué trae</h2>
+        <ul>
+          <li>
+            <h3>Funsearch</h3>
+            <p>
+              <span data-i18n="funsearch">El buscador por defecto busca. No te lleva a una URL inventada.</span>
+              <a href="https://funsearchapp.netlify.app/" data-i18n="openFunsearch">Abrir Funsearch</a>
+            </p>
+          </li>
+          <li>
+            <h3>FUNSHIELD</h3>
+            <p data-i18n="shield">Bloqueo de anuncios y rastreo, basado en uBlock Origin.</p>
+          </li>
+          <li>
+            <h3>FUNVPN y FUNTOR</h3>
+            <p data-i18n="vpn">VPN o Tor, uno cada vez. Los activas desde el menú.</p>
+          </li>
+          <li>
+            <h3>Fun Smart</h3>
+            <p data-i18n="smart">Ventana inteligente con agente. La ventana clásica sigue siendo la de inicio.</p>
+          </li>
+          <li>
+            <h3 data-i18n="navCode">Código</h3>
+            <p>
+              <span data-i18n="code">Capa de producto sobre Firefox, en</span>
+              <a href="https://github.com/ssw-813/funxplorer-src">ssw-813/funxplorer-src</a>.
+            </p>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <p data-i18n="footer">Funxplorer · basado en Firefox (MPL 2.0) · FUNSHIELD GPLv3</p>
+    </footer>
+    <script src="/i18n.js"></script>
+    <script src="/site.js"></script>
+  </body>
+</html>

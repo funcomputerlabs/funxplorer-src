@@ -3,7 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const PAGE_SIZE = 10;
-const INDEX_SEARCH = "https://www.bing.com/search";
+const FUNSEARCH_API = "https://funsearchapp.netlify.app/api/search";
+const LANGS = [
+  "en", "es", "es-MX", "ca", "eu", "gl", "fr", "de", "it", "pt", "pt-BR",
+  "nl", "pl", "ru", "uk", "tr", "ar", "he", "fa", "ur", "hi", "bn", "ta",
+  "ja", "ko", "zh-CN", "zh-TW", "vi", "th", "id", "ms", "sv", "no", "da",
+  "fi", "cs", "sk", "hu", "ro", "el", "bg", "hr", "sr", "sl", "lt", "lv",
+  "et", "ga", "sw", "af",
+];
 
 function pageParams() {
   let specs = [window.location.href, document.documentURI];
@@ -71,34 +78,53 @@ function parseHtml(htmlText) {
     .filter(Boolean);
 }
 
+function currentLang() {
+  return (
+    pageParams().get("hl") ||
+    localStorage.getItem("funsearch-lang") ||
+    navigator.language ||
+    "en"
+  );
+}
+
+function fillLanguages() {
+  let select = document.getElementById("lang-select");
+  if (!select || select.childElementCount) {
+    return;
+  }
+  let current = currentLang();
+  for (let id of LANGS) {
+    let option = document.createElement("option");
+    option.value = id;
+    option.textContent = id;
+    select.appendChild(option);
+  }
+  select.value = LANGS.includes(current) ? current : current.split("-")[0];
+  select.addEventListener("change", () => {
+    localStorage.setItem("funsearch-lang", select.value);
+    let query = document.getElementById("q").value.trim();
+    let url = "https://funsearchapp.netlify.app/?hl=" + encodeURIComponent(select.value);
+    if (query) {
+      url += "&q=" + encodeURIComponent(query);
+    }
+    window.location.href = url;
+  });
+}
+
 async function fetchResults(query, page) {
   if (typeof window.funsearchFetchResults === "function") {
     return window.funsearchFetchResults(query, page);
   }
-
-  let first = (page - 1) * PAGE_SIZE + 1;
-  let rssUrl = `${INDEX_SEARCH}?format=rss&q=${encodeURIComponent(query)}`;
-  let htmlUrl = `${INDEX_SEARCH}?q=${encodeURIComponent(query)}&first=${first}`;
-
-  if (page == 1) {
-    try {
-      let rssResponse = await fetch(rssUrl, { credentials: "omit" });
-      if (rssResponse.ok) {
-        let rssResults = parseRss(await rssResponse.text());
-        if (rssResults.length) {
-          return rssResults;
-        }
-      }
-    } catch {
-      // Fall through to HTML.
-    }
-  }
-
-  let htmlResponse = await fetch(htmlUrl, { credentials: "omit" });
-  if (!htmlResponse.ok) {
+  let lang = currentLang();
+  let response = await fetch(
+    `${FUNSEARCH_API}?q=${encodeURIComponent(query)}&page=${page}&lang=${encodeURIComponent(lang)}`,
+    { credentials: "omit" }
+  );
+  if (!response.ok) {
     throw new Error("search-failed");
   }
-  return parseHtml(await htmlResponse.text());
+  let data = await response.json();
+  return data.results || [];
 }
 
 function renderHome() {
@@ -172,6 +198,7 @@ document.getElementById("search-form").addEventListener("submit", event => {
   }
 });
 
+fillLanguages();
 let params = pageParams();
 let query = (params.get("q") || "").trim();
 document.getElementById("q").value = query;

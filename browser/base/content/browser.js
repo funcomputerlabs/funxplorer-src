@@ -264,6 +264,11 @@ XPCOMUtils.defineLazyScriptGetter(
 );
 XPCOMUtils.defineLazyScriptGetter(
   this,
+  "gFunxplorerLang",
+  "chrome://browser/content/browser-lang.js"
+);
+XPCOMUtils.defineLazyScriptGetter(
+  this,
   "gBrowserThumbnails",
   "chrome://browser/content/browser-thumbnails.js"
 );

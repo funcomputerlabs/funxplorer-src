@@ -982,7 +982,7 @@ export const AIWindow = {
   },
 
   /**
-   * Launches the FunComputer sign-in flow for the given browser.
+   * No-op account gate. Fun Smart does not require sign-in.
    *
    * @param {Browser} browser
    * @returns {Promise<boolean>} Whether the user signed in successfully

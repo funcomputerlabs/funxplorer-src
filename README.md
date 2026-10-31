@@ -39,7 +39,10 @@ Do not push Funxplorer changes to `mozilla-firefox/firefox`.
 
 ## Site
 
-Funsearch: https://funsearchapp.netlify.app/
+- Funxplorer: https://funxplorer.netlify.app/
+- Funsearch: https://funsearchapp.netlify.app/
+
+Windows portable build: GitHub Releases (`Funxplorer-156.0a2.win64.zip`). Extract and run `firefox\firefox.exe`.
 
 ## License
 

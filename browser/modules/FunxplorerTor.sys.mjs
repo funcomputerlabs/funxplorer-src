@@ -9,6 +9,8 @@ import {
   applySocksProxy,
   captureBrowserProxy,
   restoreBrowserProxy,
+  startVpnHttpBridge,
+  stopVpnHttpBridge,
 } from "resource:///modules/FunxplorerVpn.sys.mjs";
 
 const TOPIC = "funxplorer-tor-changed";
@@ -16,6 +18,7 @@ const SOCKS_HOST_PREF = "funxplorer.tor.socksHost";
 const SOCKS_PORT_PREF = "funxplorer.tor.socksPort";
 const ENABLED_PREF = "funxplorer.tor.enabled";
 const BINARY_PREF = "funxplorer.tor.binary";
+const TOR_BUNDLE_VERSION = "16.0";
 
 let gProcess = null;
 let gStartedProcess = false;
@@ -26,7 +29,7 @@ function socksHost() {
 }
 
 function socksPort() {
-  return Services.prefs.getIntPref(SOCKS_PORT_PREF, 9050);
+  return Services.prefs.getIntPref(SOCKS_PORT_PREF, 9152);
 }
 
 function fileFromPath(path) {
@@ -44,6 +47,15 @@ function candidateBinaries() {
   if (configured) {
     paths.push(configured);
   }
+  try {
+    let appDir = Services.dirsvc.get("CurProcD", Ci.nsIFile).path;
+    paths.push(
+      PathUtils.join(appDir, "funtor", "tor", "tor.exe"),
+      PathUtils.join(appDir, "funtor", "tor", "tor")
+    );
+  } catch {}
+  paths.push(PathUtils.join(PathUtils.profileDir, "funtor", "tor", "tor.exe"));
+  paths.push(PathUtils.join(PathUtils.profileDir, "funtor", "tor", "tor"));
   if (AppConstants.platform == "win") {
     let home = Services.dirsvc.get("Home", Ci.nsIFile).path;
     let localAppData = Services.env.get("LOCALAPPDATA");
@@ -73,7 +85,7 @@ function candidateBinaries() {
   return paths;
 }
 
-function findTorBinary() {
+export function findTorBinary() {
   for (let path of candidateBinaries()) {
     let file = fileFromPath(path);
     if (file) {
@@ -81,6 +93,84 @@ function findTorBinary() {
     }
   }
   return null;
+}
+
+function bundleUrl() {
+  let platform =
+    AppConstants.platform == "win"
+      ? "windows-x86_64"
+      : AppConstants.platform == "macosx"
+        ? "macos-x86_64"
+        : "linux-x86_64";
+  return (
+    "https://dist.torproject.org/torbrowser/" +
+    TOR_BUNDLE_VERSION +
+    "/tor-expert-bundle-" +
+    platform +
+    "-" +
+    TOR_BUNDLE_VERSION +
+    ".tar.gz"
+  );
+}
+
+function tarBinary() {
+  if (AppConstants.platform == "win") {
+    return fileFromPath("C:\\Windows\\System32\\tar.exe");
+  }
+  return fileFromPath("/usr/bin/tar") || fileFromPath("/bin/tar");
+}
+
+async function findTorUnder(root) {
+  let names;
+  try {
+    names = await IOUtils.getChildren(root);
+  } catch {
+    return null;
+  }
+  for (let path of names) {
+    let base = PathUtils.filename(path).toLowerCase();
+    if (base == "tor.exe" || base == "tor") {
+      return fileFromPath(path);
+    }
+    try {
+      if ((await IOUtils.stat(path)).type == "directory") {
+        let found = await findTorUnder(path);
+        if (found) {
+          return found;
+        }
+      }
+    } catch {}
+  }
+  return null;
+}
+
+async function downloadTor() {
+  let dir = PathUtils.join(PathUtils.profileDir, "funtor");
+  await IOUtils.makeDirectory(dir, { ignoreExisting: true });
+  let existing = await findTorUnder(dir);
+  if (existing) {
+    return existing;
+  }
+  let tar = tarBinary();
+  if (!tar) {
+    return null;
+  }
+  let archive = PathUtils.join(dir, "tor-expert-bundle.tar.gz");
+  let response = await fetch(bundleUrl());
+  if (!response.ok) {
+    throw new Error("Could not download Tor (" + response.status + ").");
+  }
+  await IOUtils.write(archive, new Uint8Array(await response.arrayBuffer()), {
+    tmpPath: archive + ".tmp",
+  });
+  let process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
+  process.init(tar);
+  process.runw(true, ["-xf", archive, "-C", dir], 4);
+  let binary = await findTorUnder(dir);
+  if (binary) {
+    Services.prefs.setStringPref(BINARY_PREF, binary.path);
+  }
+  return binary;
 }
 
 function canConnect(host, port, timeoutSec = 2) {
@@ -140,33 +230,68 @@ async function waitForSocks(host, port, timeoutMs) {
   return false;
 }
 
-async function startTor(port, vpn) {
+async function startTor(port) {
   let binary = findTorBinary();
+  if (!binary) {
+    try {
+      binary = await downloadTor();
+    } catch (e) {
+      return {
+        ok: false,
+        error: e.message || "Could not download Tor.",
+      };
+    }
+  }
   if (!binary) {
     return {
       ok: false,
       error:
-        "Tor was not found. Install Tor Browser or set funxplorer.tor.binary to tor.exe.",
+        "Tor was not found. Funxplorer could not download it automatically.",
     };
   }
   let dataDir = PathUtils.join(PathUtils.profileDir, "tor-funtor-data");
+  try {
+    let appDir = Services.dirsvc.get("CurProcD", Ci.nsIFile).path;
+    if (!/[^\x00-\x7F]/.test(appDir)) {
+      dataDir = PathUtils.join(appDir, "funtor-data");
+    }
+  } catch {}
   await IOUtils.makeDirectory(dataDir, { ignoreExisting: true });
+  let torrc = PathUtils.join(dataDir, "torrc");
+  let lines = [
+    "SocksPort 127.0.0.1:" + port,
+    "AvoidDiskWrites 1",
+    "ControlPort 0",
+    "CookieAuthentication 0",
+  ];
+  try {
+    let dataDirBundle = PathUtils.join(binary.parent.parent.path, "data");
+    let geoip = PathUtils.join(dataDirBundle, "geoip");
+    let geoip6 = PathUtils.join(dataDirBundle, "geoip6");
+    if (await IOUtils.exists(geoip)) {
+      lines.push("GeoIPFile " + geoip.replaceAll("\\", "/"));
+    }
+    if (await IOUtils.exists(geoip6)) {
+      lines.push("GeoIPv6File " + geoip6.replaceAll("\\", "/"));
+    }
+  } catch {}
+  await IOUtils.writeUTF8(torrc, lines.join("\n") + "\n");
   let process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
   process.init(binary);
-  let args = [
-    "--DataDirectory",
-    dataDir,
-    "SocksPort",
-    "127.0.0.1:" + port,
-    "HTTPSProxy",
-    vpn.host + ":" + vpn.port,
-    "HTTPSProxyAuthenticator",
-    vpn.username + ":" + vpn.password,
-    "--quiet",
-  ];
+  try {
+    process.startHidden = true;
+  } catch {}
+  let args = ["-f", torrc];
   process.runw(false, args, args.length);
   gProcess = process;
   gStartedProcess = true;
+  await new Promise(resolve => setTimeout(resolve, 400));
+  if (!process.isRunning) {
+    return {
+      ok: false,
+      error: "tor.exe salió al instante (" + binary.path + ").",
+    };
+  }
   return { ok: true };
 }
 
@@ -180,6 +305,7 @@ function stopTor() {
   }
   gProcess = null;
   gStartedProcess = false;
+  stopVpnHttpBridge();
 }
 
 function ensureQuitObserver() {
@@ -188,7 +314,7 @@ function ensureQuitObserver() {
   }
   gQuitObserver = true;
   Services.obs.addObserver(() => {
-    FunxplorerTor.disable({ restoring: false, quitting: true });
+    FunxplorerTor.disable({ quitting: true });
   }, "quit-application");
 }
 
@@ -197,6 +323,10 @@ export const FunxplorerTor = {
 
   get enabled() {
     return Services.prefs.getBoolPref(ENABLED_PREF, false);
+  },
+
+  hasBinary() {
+    return !!findTorBinary();
   },
 
   async toggle() {
@@ -211,24 +341,26 @@ export const FunxplorerTor = {
     if (FunxplorerVpn.enabled) {
       FunxplorerVpn.disable();
     }
-    let vpn = await FunxplorerVpn.pickEndpoint();
-    if (!vpn.ok) {
-      return vpn;
-    }
     let host = socksHost();
     let port = socksPort();
     if (!(gStartedProcess && (await canConnect(host, port)))) {
       stopTor();
-      let started = await startTor(port, vpn);
+      let started = await startTor(port);
       if (!started.ok) {
         return started;
       }
-      let ready = await waitForSocks(host, port, 25000);
+      let ready = await waitForSocks(host, port, 45000);
       if (!ready) {
+        let running = false;
+        try {
+          running = gProcess?.isRunning;
+        } catch {}
         stopTor();
         return {
           ok: false,
-          error: "FUNTOR started but the SOCKS port is not ready.",
+          error: running
+            ? "Tor arrancó pero el puerto SOCKS no responde."
+            : "Tor se detuvo antes de abrir el puerto SOCKS.",
         };
       }
     }
@@ -241,6 +373,7 @@ export const FunxplorerTor = {
 
   disable({ quitting = false } = {}) {
     if (!this.enabled && !gStartedProcess) {
+      stopVpnHttpBridge();
       return { ok: true };
     }
     stopTor();

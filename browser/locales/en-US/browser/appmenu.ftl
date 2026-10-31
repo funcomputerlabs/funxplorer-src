@@ -22,7 +22,7 @@ appmenuitem-banner-update-restart =
 appmenu-nova-update-title = Restart to update { -brand-short-name }
 appmenu-nova-update-description = Your tabs will reopen.
 
-appmenu-nova-fxa-sign-in = Sign in to FunComputer
+appmenu-nova-fxa-sign-in = Sign in
 
 appmenu-nova-switch-device-promo =
     .message = Getting a new device soon? Take { -brand-short-name } with you!
@@ -37,13 +37,19 @@ appmenuitem-new-private-window =
     .label = New Private Window
 appmenu-funvpn-toggle =
     .label = FUNVPN
-    .tooltiptext = Connect through 1VPN
+    .tooltiptext = Conectar a través de 1VPN
 appmenu-funshield-toggle =
     .label = FUNSHIELD
-    .tooltiptext = Block ads, trackers, and annoyances
+    .tooltiptext = Bloquear anuncios, rastreadores y molestias
 appmenu-funtor-toggle =
     .label = FUNTOR
-    .tooltiptext = Connect through Tor over FUNVPN
+    .tooltiptext = Conectar a través de Tor
+appmenu-language =
+    .label = Idioma
+    .tooltiptext = Elegir el idioma de Funxplorer y Funsearch
+appmenu-funxplorer-customize =
+    .label = Personalizar
+    .tooltiptext = Apariencia, privacidad y comportamiento de Funxplorer
 appmenuitem-history =
   .label = History
 appmenuitem-tab-groups =
@@ -191,7 +197,7 @@ fxa-menu-get-firefox-mobile =
 
 fxa-menu-secure-sync-subpanel =
     .title = Secure sync
-appmenu-account-header = FunComputer account
+appmenu-account-header = Account
 # Variables
 # $time (string) - Localized relative time since last sync (e.g. 1 second ago,
 # 3 hours ago, etc.)
@@ -202,7 +208,7 @@ appmenu-fxa-signed-in-label = Sign In
 
 # Sign-in promo shown in the app menu when signed out and no menu message or
 # update banner is present, prompting the user to sign in and sync.
-appmenu-fxa-sign-in-promo-heading = Sign in to FunComputer
+appmenu-fxa-sign-in-promo-heading = Sign in to sync
 appmenu-fxa-sign-in-promo-message = Get your data everywhere
 appmenu-fxa-sign-in-promo-button =
     .label = Sign in

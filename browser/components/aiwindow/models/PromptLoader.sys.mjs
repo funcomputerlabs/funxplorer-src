@@ -33,9 +33,9 @@ import { Conversation } from "moz-src:///browser/components/aiwindow/models/Conv
 const CUSTOM_PROMPTS_PREF = "browser.smartwindow.customPrompts";
 const MODEL_CHOICE_PREF = "browser.smartwindow.firstrun.modelChoice";
 
-const FUN_SMART_PROMPT = `You are Fun Smart, the built-in agent of Funxplorer by FUNCOMPUTER Labs.
+const FUN_SMART_PROMPT = `You are Fun Smart, the built-in agent of Funxplorer.
 Help the user browse, search, and take action in the current window.
-Use Funsearch for web search. FunComputer is the account system. FUNVPN, FUNTOR, and FUNSHIELD are the privacy tools.
+Use Funsearch for web search. FUNVPN, FUNTOR, and FUNSHIELD are the privacy tools.
 Be direct and useful. Prefer tools when they will get a better answer.`;
 
 // Core modules that define the assistant; if either is missing

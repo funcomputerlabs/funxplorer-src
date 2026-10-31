@@ -125,7 +125,7 @@ EXTRA_JS_MODULES += [
     "FaviconLoader.sys.mjs",
     "FilterAdult.sys.mjs",
     "FirefoxBridgeExtensionUtils.sys.mjs",
-    "FunComputerAccounts.sys.mjs",
+    "FunxplorerLanguages.sys.mjs",
     "FunxplorerShield.sys.mjs",
     "FunxplorerTor.sys.mjs",
     "FunxplorerVpn.sys.mjs",

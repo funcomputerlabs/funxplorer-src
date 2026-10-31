@@ -1,0 +1,61 @@
+export const LANGS = [
+  { id: "en", name: "English", wiki: "en", mkt: "en-US", qwant: "en_US", kl: "us-en" },
+  { id: "es", name: "Español", wiki: "es", mkt: "es-ES", qwant: "es_ES", kl: "es-es" },
+  { id: "es-MX", name: "Español (México)", wiki: "es", mkt: "es-MX", qwant: "es_MX", kl: "mx-es" },
+  { id: "ca", name: "Català", wiki: "ca", mkt: "ca-ES", qwant: "ca_ES", kl: "es-ca" },
+  { id: "eu", name: "Euskara", wiki: "eu", mkt: "eu-ES", qwant: "eu_ES", kl: "es-eu" },
+  { id: "gl", name: "Galego", wiki: "gl", mkt: "gl-ES", qwant: "gl_ES", kl: "es-gl" },
+  { id: "fr", name: "Français", wiki: "fr", mkt: "fr-FR", qwant: "fr_FR", kl: "fr-fr" },
+  { id: "de", name: "Deutsch", wiki: "de", mkt: "de-DE", qwant: "de_DE", kl: "de-de" },
+  { id: "it", name: "Italiano", wiki: "it", mkt: "it-IT", qwant: "it_IT", kl: "it-it" },
+  { id: "pt", name: "Português", wiki: "pt", mkt: "pt-PT", qwant: "pt_PT", kl: "pt-pt" },
+  { id: "pt-BR", name: "Português (Brasil)", wiki: "pt", mkt: "pt-BR", qwant: "pt_BR", kl: "br-pt" },
+  { id: "nl", name: "Nederlands", wiki: "nl", mkt: "nl-NL", qwant: "nl_NL", kl: "nl-nl" },
+  { id: "pl", name: "Polski", wiki: "pl", mkt: "pl-PL", qwant: "pl_PL", kl: "pl-pl" },
+  { id: "ru", name: "Русский", wiki: "ru", mkt: "ru-RU", qwant: "ru_RU", kl: "ru-ru" },
+  { id: "uk", name: "Українська", wiki: "uk", mkt: "uk-UA", qwant: "uk_UA", kl: "ua-uk" },
+  { id: "tr", name: "Türkçe", wiki: "tr", mkt: "tr-TR", qwant: "tr_TR", kl: "tr-tr" },
+  { id: "ar", name: "العربية", wiki: "ar", mkt: "ar-SA", qwant: "ar_SA", kl: "xa-ar" },
+  { id: "he", name: "עברית", wiki: "he", mkt: "he-IL", qwant: "he_IL", kl: "il-he" },
+  { id: "fa", name: "فارسی", wiki: "fa", mkt: "fa-IR", qwant: "fa_IR", kl: "ir-fa" },
+  { id: "ur", name: "اردو", wiki: "ur", mkt: "ur-PK", qwant: "ur_PK", kl: "pk-ur" },
+  { id: "hi", name: "हिन्दी", wiki: "hi", mkt: "hi-IN", qwant: "hi_IN", kl: "in-hi" },
+  { id: "bn", name: "বাংলা", wiki: "bn", mkt: "bn-IN", qwant: "bn_IN", kl: "in-bn" },
+  { id: "ta", name: "தமிழ்", wiki: "ta", mkt: "ta-IN", qwant: "ta_IN", kl: "in-ta" },
+  { id: "ja", name: "日本語", wiki: "ja", mkt: "ja-JP", qwant: "ja_JP", kl: "jp-jp" },
+  { id: "ko", name: "한국어", wiki: "ko", mkt: "ko-KR", qwant: "ko_KR", kl: "kr-kr" },
+  { id: "zh-CN", name: "简体中文", wiki: "zh", mkt: "zh-CN", qwant: "zh_CN", kl: "cn-zh" },
+  { id: "zh-TW", name: "繁體中文", wiki: "zh", mkt: "zh-TW", qwant: "zh_TW", kl: "tw-tzh" },
+  { id: "vi", name: "Tiếng Việt", wiki: "vi", mkt: "vi-VN", qwant: "vi_VN", kl: "vn-vi" },
+  { id: "th", name: "ไทย", wiki: "th", mkt: "th-TH", qwant: "th_TH", kl: "th-th" },
+  { id: "id", name: "Bahasa Indonesia", wiki: "id", mkt: "id-ID", qwant: "id_ID", kl: "id-id" },
+  { id: "ms", name: "Bahasa Melayu", wiki: "ms", mkt: "ms-MY", qwant: "ms_MY", kl: "my-ms" },
+  { id: "sv", name: "Svenska", wiki: "sv", mkt: "sv-SE", qwant: "sv_SE", kl: "se-sv" },
+  { id: "no", name: "Norsk", wiki: "no", mkt: "nb-NO", qwant: "nb_NO", kl: "no-no" },
+  { id: "da", name: "Dansk", wiki: "da", mkt: "da-DK", qwant: "da_DK", kl: "dk-da" },
+  { id: "fi", name: "Suomi", wiki: "fi", mkt: "fi-FI", qwant: "fi_FI", kl: "fi-fi" },
+  { id: "cs", name: "Čeština", wiki: "cs", mkt: "cs-CZ", qwant: "cs_CZ", kl: "cz-cs" },
+  { id: "sk", name: "Slovenčina", wiki: "sk", mkt: "sk-SK", qwant: "sk_SK", kl: "sk-sk" },
+  { id: "hu", name: "Magyar", wiki: "hu", mkt: "hu-HU", qwant: "hu_HU", kl: "hu-hu" },
+  { id: "ro", name: "Română", wiki: "ro", mkt: "ro-RO", qwant: "ro_RO", kl: "ro-ro" },
+  { id: "el", name: "Ελληνικά", wiki: "el", mkt: "el-GR", qwant: "el_GR", kl: "gr-el" },
+  { id: "bg", name: "Български", wiki: "bg", mkt: "bg-BG", qwant: "bg_BG", kl: "bg-bg" },
+  { id: "hr", name: "Hrvatski", wiki: "hr", mkt: "hr-HR", qwant: "hr_HR", kl: "hr-hr" },
+  { id: "sr", name: "Српски", wiki: "sr", mkt: "sr-RS", qwant: "sr_RS", kl: "rs-sr" },
+  { id: "sl", name: "Slovenščina", wiki: "sl", mkt: "sl-SI", qwant: "sl_SI", kl: "si-sl" },
+  { id: "lt", name: "Lietuvių", wiki: "lt", mkt: "lt-LT", qwant: "lt_LT", kl: "lt-lt" },
+  { id: "lv", name: "Latviešu", wiki: "lv", mkt: "lv-LV", qwant: "lv_LV", kl: "lv-lv" },
+  { id: "et", name: "Eesti", wiki: "et", mkt: "et-EE", qwant: "et_EE", kl: "ee-et" },
+  { id: "ga", name: "Gaeilge", wiki: "ga", mkt: "ga-IE", qwant: "ga_IE", kl: "ie-en" },
+  { id: "sw", name: "Kiswahili", wiki: "sw", mkt: "sw-KE", qwant: "sw_KE", kl: "ke-en" },
+  { id: "af", name: "Afrikaans", wiki: "af", mkt: "af-ZA", qwant: "af_ZA", kl: "za-en" },
+];
+
+export function resolveLang(code) {
+  const raw = (code || "en").trim();
+  return (
+    LANGS.find(item => item.id.toLowerCase() === raw.toLowerCase()) ||
+    LANGS.find(item => raw.toLowerCase().startsWith(item.id.toLowerCase())) ||
+    LANGS[0]
+  );
+}

@@ -110,6 +110,13 @@
                      closemenu="none"
                      data-l10n-id="appmenu-funtor-toggle"
                      oncommand="gFunxplorerTor.toggle();"/>
+      <toolbarbutton id="appMenu-language-button"
+                     class="subviewbutton subviewbutton-nav"
+                     data-l10n-id="appmenu-language"
+                     closemenu="none"/>
+      <toolbarbutton id="appMenu-funxplorer-customize-button"
+                     class="subviewbutton"
+                     data-l10n-id="appmenu-funxplorer-customize"/>
       <toolbarseparator/>
       <toolbarbutton id="appMenu-history-button"
                      class="subviewbutton subviewbutton-nav"
@@ -231,6 +238,10 @@
                      command="cmd_quitApplication"/>
 #endif
     </vbox>
+  </panelview>
+
+  <panelview id="PanelUI-funxplorer-languages" class="PanelUI-subView">
+    <vbox class="panel-subview-body" id="appMenu-language-list"/>
   </panelview>
 
   <panelview id="PanelUI-history">

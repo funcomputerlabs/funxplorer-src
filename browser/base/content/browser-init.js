@@ -967,6 +967,7 @@ var gBrowserInit = {
       gFunxplorerTor.init();
       gFunxplorerVpn.init();
       gFunxplorerShield.init();
+      gFunxplorerLang.init();
     });
 
     scheduleIdleTask(() => {

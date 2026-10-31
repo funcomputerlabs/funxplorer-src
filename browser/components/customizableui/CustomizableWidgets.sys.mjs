@@ -809,6 +809,7 @@ CustomizableWidgets.push({
 CustomizableWidgets.push({
   id: "funvpn-button",
   l10nId: "toolbar-button-funvpn",
+  defaultArea: "nav-bar",
   onCreated(node) {
     node.setAttribute("type", "checkbox");
     node.setAttribute("closemenu", "none");
@@ -816,13 +817,15 @@ CustomizableWidgets.push({
     node.setAttribute("aria-pressed", "false");
   },
   onCommand(e) {
-    e.target.documentGlobal.gFunxplorerVpn.toggle();
+    let win = e.target.ownerGlobal || e.target.documentGlobal;
+    win.gFunxplorerVpn.toggle();
   },
 });
 
 CustomizableWidgets.push({
   id: "tor-button",
   l10nId: "toolbar-button-tor",
+  defaultArea: "nav-bar",
   onCreated(node) {
     node.setAttribute("type", "checkbox");
     node.setAttribute("closemenu", "none");
@@ -830,7 +833,8 @@ CustomizableWidgets.push({
     node.setAttribute("aria-pressed", "false");
   },
   onCommand(e) {
-    e.target.documentGlobal.gFunxplorerTor.toggle();
+    let win = e.target.ownerGlobal || e.target.documentGlobal;
+    win.gFunxplorerTor.toggle();
   },
 });
 
